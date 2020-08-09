@@ -1,0 +1,17 @@
+.pageMdAndUp {
+    background: #f9f9f9;
+    width: 85%;
+    float: left;
+}
+
+.pageXsOnlyAndMsOnly {
+    background: #f9f9f9;
+    width: 100%;
+    float: left;
+}
+
+.pageMdAndDown {
+    background: #f9f9f9;
+    width: 95%;
+    float: left;
+}
