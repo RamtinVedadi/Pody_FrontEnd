@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="fontMain">
     <div class="pageMdAndUp hidden-md-only hidden-md-and-down hidden-sm-and-down"
          v-show="$vuetify.breakpoint.mdAndUp">
@@ -106,19 +106,19 @@
     components: {NotLogin, Loader, MobileCardPlayer, CardPlayer, InfiniteLoading},
     name: "MyLikes",
     async asyncData(context) {
-      if (context.store.getters.userLogin === false) {
-        context.isLogin = false
-      } else {
-        context.isLogin = true;
-        return axios.get("http://localhost:8084/api/podcast/list/like/" + context.store.state.user[0].userId + "/user/" + context.page + "/" + context.size).then(response => {
-          if (response.status === 200) {
-            return {
-              pageLoadAction: true,
-              podcasts: response.data,
-            }
-          }
-        });
-      }
+      // if (context.store.getters.userLogin === false) {
+      //   context.isLogin = false
+      // } else {
+      //   context.isLogin = true;
+      //   return axios.get("http://localhost:8084/api/podcast/list/like/" + context.store.state.user[0].userId + "/user/" + 0 + "/" + 20).then(response => {
+      //     if (response.status === 200) {
+      //       return {
+      //         pageLoadAction: true,
+      //         podcasts: response.data,
+      //       }
+      //     }
+      //   });
+      // }
     },
     data() {
       return {
@@ -147,7 +147,17 @@
       },
     },
     created() {
-
+      if (this.$store.getters.userLogin === false) {
+        this.isLogin = false;
+      } else {
+        this.isLogin = true;
+        axios.get("http://localhost:8084/api/podcast/list/like/" + this.$store.state.user[0].userId + "/user/" + this.page + "/" + this.size).then(response => {
+          if (response.status === 200) {
+            this.pageLoadAction = true;
+            this.podcasts = response.data;
+          }
+        });
+      }
     },
     head() {
       return {
@@ -158,5 +168,7 @@
 </script>
 
 <style scoped>
-
+  @import "../../assets/Styles/GlobalPurposeStyle.css";
+  @import "../../assets/Styles/PageSizingStyle.css";
+  @import "../../assets/Styles/FontiranSans.css";
 </style>

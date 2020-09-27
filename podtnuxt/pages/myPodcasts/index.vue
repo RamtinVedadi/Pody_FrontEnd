@@ -213,7 +213,7 @@
 
   export default {
     layout: "pody",
-    name: "MyPodcasts",
+    name: "myPodcasts",
     components: {MobileCardPlayer, Loader, CardPlayer, InfiniteLoading},
     async asyncData(context) {
       if (context.store.getters.userLogin === false) {

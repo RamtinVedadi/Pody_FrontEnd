@@ -273,17 +273,17 @@
     name: "subscriptions",
     components: {MobileCardPlayer, NotLogin, CardPlayer, Loader},
     async asyncData(context) {
-      const userId = context.store.state.user[0].userId;
-      axios.get("http://localhost:8084/api/user/list/subscriptions/" + userId).then((response) => {
-        if (response.status === 200) {
-          return {
-            pageLoading: true,
-            subscriptions: response.data.followingChannels,
-            categories: response.data.followingCategories,
-          }
-
-        }
-      });
+      // const userId = context.store.state.user[0].userId;
+      //  axios.get("http://localhost:8084/api/user/list/subscriptions/" + userId).then((response) => {
+      //   if (response.status === 200) {
+      //     return {
+      //       pageLoading: true,
+      //       subscriptions: response.data.followingChannels,
+      //       categories: response.data.followingCategories,
+      //     }
+      //
+      //   }
+      // });
 
     },
     data() {
@@ -320,15 +320,34 @@
         this.$router.push('/publisher/' + id);
       },
       categoryPageNavigation(id) {
-        this.$router.push('/categoryPage/' + id);
+        this.$router.push('/category/' + id);
       },
     },
     created() {
+      // console.log(this.$store.state.user[0].username + "STORE")
+      // let userId = this.$store.state.user[0].userId;
+      // console.log(userId + "USER ID");
+      // axios.get("http://localhost:8084/api/user/list/subscriptions/" + userId).then((response) => {
+      //   if (response.status === 200) {
+      //     this.pageLoading = true
+      //     this.subscriptions = response.data.followingChannels;
+      //     this.categories = response.data.followingCategories;
+      //   }
+      // });
 
     },
     mounted() {
-      if (this.$store.getters.userLogin === true) {
+      if (this.$store.getters.userLogin === false) {
+        this.isLogin = false;
+      } else {
         this.isLogin = true;
+        axios.get("http://localhost:8084/api/user/list/subscriptions/" + this.$store.state.user[0].userId).then((response) => {
+          if (response.status === 200) {
+            this.pageLoading = true
+            this.subscriptions = response.data.followingChannels;
+            this.categories = response.data.followingCategories;
+          }
+        });
       }
     },
     head() {

@@ -2,20 +2,23 @@
   <div class="fontMain">
     <div class="pageMdAndUp hidden-md-only hidden-md-and-down hidden-sm-and-down"
          v-show="$vuetify.breakpoint.mdAndUp">
-      <v-row>
-        <v-col cols="0"></v-col>
-        <v-col cols="11">
-          <v-stepper v-model="e1">
-            <v-stepper-header>
-              <v-stepper-step :complete="e1 > 1" step="1">عنوان پادکست</v-stepper-step>
-              <v-stepper-step :complete="e1 > 2" step="2">توضیحات پادکست</v-stepper-step>
-              <v-stepper-step :complete="e1 > 3" step="3">آپلود پادکست</v-stepper-step>
-              <v-stepper-step step="4">انتشار</v-stepper-step>
-            </v-stepper-header>
-            <v-stepper-items>
-              <v-stepper-content step="1">
-                <v-card class="mb-12" color="lighten-1" flat>
-                  <div>
+      <div v-if="isLogin === false">
+        <NotLogin/>
+      </div>
+      <div v-else>
+        <v-row>
+          <v-col cols="0"></v-col>
+          <v-col cols="11">
+            <v-stepper v-model="e1">
+              <v-stepper-header>
+                <v-stepper-step :complete="e1 > 1" step="1">عنوان پادکست</v-stepper-step>
+                <v-stepper-step :complete="e1 > 2" step="2">توضیحات پادکست</v-stepper-step>
+                <v-stepper-step :complete="e1 > 3" step="3">آپلود پادکست</v-stepper-step>
+                <v-stepper-step step="4">انتشار</v-stepper-step>
+              </v-stepper-header>
+              <v-stepper-items>
+                <v-stepper-content step="1">
+                  <v-card class="mb-12" color="lighten-1" flat>
                     <v-text-field v-model="title"
                                   :rules="[titleRules.error() , titleRules.error1()]"
                                   :counter="60" label="عنوان پادکست"
@@ -37,124 +40,147 @@
                         </v-text-field>
                       </v-col>
                     </v-row>
-                  </div>
-                </v-card>
-                <v-btn color="primary" large @click="goToStepTwo">مرحله بعد</v-btn>
-              </v-stepper-content>
+                  </v-card>
+                  <v-btn color="primary" large @click="goToStepTwo">مرحله بعد</v-btn>
+                </v-stepper-content>
 
-              <v-stepper-content step="2">
-                <v-card class="mb-12" color="lighten-1" flat>
+                <v-stepper-content step="2">
+                  <v-card class="mb-12" color="lighten-1" flat>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-textarea v-model="shortDescription"
+                                    clearable :counter="150" outlined
+                                    label="توضیحات مختصر"
+                        ></v-textarea>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-textarea v-model="description" :rules="[descriptionRules.error()]"
+                                    clearable outlined label="توضیحات کلی"
+                        ></v-textarea>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" md="6" xs="2">
+                        <v-select v-model="selectedCategory" :items="category"
+                                  item-text="name" item-value="id"
+                                  prepend-icon="mdi-shape" menu-props="auto"
+                                  hide-details outlined label="دسته بندی" required
+                                  single-line :rules="[selectedCategoryRules.error()]"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" md="6" xs="2">
+                        <v-select v-model="selectedSubCategory" :items="subCategory"
+                                  item-text="name" item-value="id"
+                                  prepend-icon="mdi-shape-plus" menu-props="auto"
+                                  hide-details outlined label="زیر دسته بندی"
+                                  v-on:click="loadSubCategory(selectedCategory)" required
+                                  single-line :rules="[selectedSubCategoryRules.error()]"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                  </v-card>
+                  <v-btn color="primary" @click="goToStepThree">مرحله بعد</v-btn>
+                  <v-btn text @click="e1 = 1">بازگشت به مرحله قبل</v-btn>
+                </v-stepper-content>
+
+                <v-stepper-content step="3">
+                  <v-card class="mb-12" color="lighten-1" height="300px" flat>
+                    <v-row class="pb-0">
+                      <v-col class="pb-0" cols="12" md="6" xs="2">
+                        <h5 class="pr-9 pb-3 font-weight-light" style="color: #bebebe">در
+                          صورتیکه این قسمت شما کاوری
+                          ندارد عکس کانال
+                          خود
+                          را دوباره آپلود
+                          کنید</h5>
+                        <v-file-input id="inpFile"
+                                      accept="image/png, image/jpeg, image/bmp"
+                                      placeholder="عکس پادکست را انتخاب کنید"
+                                      prepend-icon="mdi-camera" label="عکس"
+                                      show-size required outlined
+                                      v-model="podcastImage" @change="onFileChange">
+                          <template v-slot:selection="{ text }">
+                            <v-chip small label color="primary"
+                                    @change="onFileChange">
+                              {{ text }}
+                            </v-chip>
+                          </template>
+                        </v-file-input>
+                      </v-col>
+                      <v-col class="pb-0" cols="12" md="6" xs="2">
+                        <h5 class="pr-9 pb-3 font-weight-light" style="color: #bebebe">آپلود
+                          فایل صوتی اجباری ست</h5>
+                        <v-file-input v-model="files" accept="audio/mp3"
+                                      placeholder="فایل پادکست خود را انتخاب کنید"
+                                      label="فایل پادکست" show-size outlined
+                                      prepend-icon="mdi-paperclip">
+                          <template v-slot:selection="{ text }">
+                            <v-chip small label color="primary">
+                              {{ text }}
+                            </v-chip>
+                          </template>
+                        </v-file-input>
+                      </v-col>
+                    </v-row>
+                    <v-row class="pr-9 pt-0">
+                      <v-col cols="6">
+                        <h6 class="pb-3 font-weight-medium">پیش نمایش عکس
+                          انتخاب شده</h6>
+                        <div id="preview"
+                             style="width: 150px;height: 150px;background-color: #ffffff">
+                          <img id="imagePreview"/>
+                        </div>
+                      </v-col>
+                      <v-col cols="6">
+                      </v-col>
+                    </v-row>
+                  </v-card>
+                  <v-btn color="primary" width="230" @click="goToStepFour">آپلود پادکست</v-btn>
+                </v-stepper-content>
+
+                <v-stepper-content step="4">
+                  <v-row>
+                    <v-col cols="3">
+                      <v-row justify="center">
+                        <h2>پیش نمایش پادکست</h2>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col style="float: left" cols="6">
+                          <h3>پیش نمایش حالت دسکتاپ و تبلت</h3>
+                          <br>
+                          <CardPlayer :item="item" title-count="18"/>
+                        </v-col>
+                        <v-col style="float: left" cols="6">
+                          <h3>پیش نمایش حالت موبایل</h3>
+                          <br>
+                          <MobileCardPlayer :item="item"/>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
                   <v-row>
                     <v-col cols="12">
-                      <v-textarea v-model="shortDescription"
-                                  clearable :counter="150" outlined
-                                  label="توضیحات مختصر"
-                      ></v-textarea>
+                      <v-btn color="primary" @click="publishPodcast">انتشار</v-btn>
+                      <v-btn text color="red" @click="cancelPublishing">انصراف</v-btn>
                     </v-col>
-                  </v-row>
-                  <v-row>
                     <v-col cols="12">
-                      <v-textarea v-model="description" :rules="[descriptionRules.error()]"
-                                  clearable outlined label="توضیحات کلی"
-                      ></v-textarea>
+                      <h4 class="font-weight-light">در صورت انتخاب گزینه انصراف پادکست شما در حالت
+                        منتشر نشده ذخیره میشود</h4>
                     </v-col>
                   </v-row>
-                  <v-row>
-                    <v-col cols="12" md="6" xs="2">
-                      <v-select v-model="selectedCategory" :items="category"
-                                item-text="name" item-value="id"
-                                prepend-icon="mdi-shape" menu-props="auto"
-                                hide-details outlined label="دسته بندی" required
-                                single-line :rules="[selectedCategoryRules.error()]"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" md="6" xs="2">
-                      <v-select v-model="selectedSubCategory" :items="subCategory"
-                                item-text="name" item-value="id"
-                                prepend-icon="mdi-shape-plus" menu-props="auto"
-                                hide-details outlined label="زیر دسته بندی"
-                                v-on:click="loadSubCategory" required
-                                single-line :rules="[selectedSubCategoryRules.error()]"
-                      ></v-select>
-                    </v-col>
-                  </v-row>
-                </v-card>
-                <v-btn color="primary" @click="goToStepThree">مرحله بعد</v-btn>
-                <v-btn text @click="e1 = 1">بازگشت به مرحله قبل</v-btn>
-              </v-stepper-content>
-
-              <v-stepper-content step="3">
-                <v-card class="mb-12" color="lighten-1" height="300px">
-                  <v-row>
-                    <v-col cols="12" md="6" xs="2">
-                      <v-file-input id="inpFile"
-                                    accept="image/png, image/jpeg, image/bmp"
-                                    placeholder="عکس پادکست را انتخاب کنید"
-                                    prepend-icon="mdi-camera" label="عکس"
-                                    show-size required outlined
-                                    v-model="podcastImage" @change="onFileChange">
-                        <template v-slot:selection="{ text }">
-                          <v-chip small label color="primary"
-                                  @change="onFileChange">
-                            {{ text }}
-                          </v-chip>
-                        </template>
-                      </v-file-input>
-                    </v-col>
-                    <v-col cols="12" md="6" xs="2">
-                      <v-file-input v-model="files"
-                                    placeholder="فایل پادکست خود را انتخاب کنید"
-                                    label="فایل پادکست" show-size outlined
-                                    prepend-icon="mdi-paperclip">
-                        <template v-slot:selection="{ text }">
-                          <v-chip small label color="primary">
-                            {{ text }}
-                          </v-chip>
-                        </template>
-                      </v-file-input>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="6">
-                      <div id="preview"
-                           style="width: 150px;height: 150px;background-color: #9f9f9f">
-                        <img id="imagePreview">
-                      </div>
-                    </v-col>
-                    <v-col cols="6">
-                    </v-col>
-                  </v-row>
-                </v-card>
-                <v-btn color="primary" @click="goToStepFour">آپلود پادکست</v-btn>
-                <v-btn text @click="e1 = 2">بازگشت به مرحله قبل</v-btn>
-              </v-stepper-content>
-
-              <v-stepper-content step="4">
-                <v-row>
-                  <v-row>
-                    <h2>پیش نمایش پادکست</h2>
-                  </v-row>
-                  <v-row>
-                    <v-col style="float: left" cols="6">
-                      <h3>پیش نمایش حالت دسکتاپ</h3>
-<!--                      <CardPlayer :item="item" title-count="18"/>-->
-                    </v-col>
-                    <v-col style="float: left" cols="6">
-                      <h3>پیش نمایش حالت موبایل</h3>
-<!--                      <MobileCardPlayer :item="item"/>-->
-                    </v-col>
-                  </v-row>
-                </v-row>
-                <v-btn color="primary" @click="e1 = 1">انتشار</v-btn>
-                <v-btn text @click="e1 = 3">بازگشت به مرحله قبل</v-btn>
-                <v-btn text color="blue">انصراف</v-btn>
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </v-col>
-        <v-col cols="0"></v-col>
-      </v-row>
-      <div style="height: 100px;"></div>
+                </v-stepper-content>
+              </v-stepper-items>
+            </v-stepper>
+          </v-col>
+          <v-col cols="0"></v-col>
+        </v-row>
+        <div style="height: 100px;"></div>
+        <Snackbar :snackbar="snackbarFlag" :snackbar-text="snackbarText"/>
+      </div>
     </div>
     <div v-show="$vuetify.breakpoint.xsOnly">
       <div class="upload ml-5 mr-5 mt-1">
@@ -287,6 +313,8 @@
                       </v-chip>
                     </template>
                   </v-file-input>
+                  <br>
+                  <h5>در صورتیکه این قسمت شما کاوری ندارد عکس کانال خود را دوباره آپلود کنید</h5>
                 </v-row>
                 <v-row class="mr-1 mt-1 justify-center" style="width: 90%">
                   <div id="previewXS" style="width: 80px;height: 80px;background-color: #9f9f9f">
@@ -314,12 +342,11 @@
                       </v-chip>
                     </template>
                   </v-file-input>
+                  <h5>آپلود فایل صوتی اجباری ست</h5>
                 </v-row>
-
               </v-card>
 
               <v-btn small color="primary" @click="e1 = 4">آپلود پادکست</v-btn>
-              <v-btn small text @click="e1 = 2">بازگشت به مرحله قبل</v-btn>
             </v-stepper-content>
 
             <v-stepper-content step="4">
@@ -341,14 +368,16 @@
 </template>
 
 <script>
-  import MobileCardPlayer from "../../../components/cards/MobileCardPlayer";
   import CardPlayer from "../../../components/cards/CardPlayer";
   import axios from 'axios';
+  import MobileCardPlayer from "../../../components/cards/MobileCardPlayer";
+  import NotLogin from "../../../components/errors/NotLogin";
+  import Snackbar from "../../../components/tools/Snackbar";
 
   export default {
     layout: "pody",
     name: "UploadPodcast",
-    components: {MobileCardPlayer, CardPlayer},
+    components: {Snackbar, NotLogin, MobileCardPlayer, CardPlayer},
     data() {
       return {
         e1: 1,
@@ -394,6 +423,9 @@
         errors: [],
         podcastId: null,
         files: null,
+        isLogin: false,
+        snackbarFlag: false,
+        snackbarText: '',
       }
     },
     methods: {
@@ -409,11 +441,11 @@
         }
 
         if (this.seasonNumber != null || this.episodeNumber != null) {
-          if (typeof this.seasonNumber != 'number') {
+          if (isNaN(this.seasonNumber) === true) {
             this.seasonNumberErrorMessage = 'باید برای انتقال به مرحله بعد باید فیلد شماره فصل عددی باشد.';
             return
           }
-          if (typeof this.episodeNumber != 'number') {
+          if (isNaN(this.episodeNumber) === true) {
             this.episodeNumberErrorMessage = 'باید برای انتقال به مرحله بعد باید فیلد شماره قسمت عددی باشد.';
             return
           }
@@ -433,17 +465,48 @@
       },
       goToStepFour() {
         const formData = new FormData();
-        formData.append('image', this.podcastImage);
-        formData.append('audio', this.files);
-        const config = {
-          headers: {
-            'content-type': 'multipart/form-data'
+        if (this.podcastImage != null) {
+          formData.append('image', this.podcastImage);
+
+          formData.append('audio', this.files);
+          const config = {
+            headers: {
+              'content-type': 'multipart/form-data'
+            }
+          };
+          axios.post("http://localhost:8084/api/podcast/" + this.podcastId + "/upload", formData, config).then((response) => {
+            this.item = response.data;
+            this.e1 = 4;
+          });
+        } else {
+          formData.append('audio', this.files);
+          const config = {
+            headers: {
+              'content-type': 'multipart/form-data'
+            }
+          };
+          axios.post("http://localhost:8084/api/podcast/" + this.podcastId + "/user/" + this.$store.state.user[0].userId + "/upload", formData, config).then((response) => {
+            this.item = response.data;
+            this.e1 = 4;
+          });
+        }
+      },
+      publishPodcast() {
+        axios.post("http://localhost:8084/api/podcast/0/publish/update", {id: this.item.podcastId}).then(response => {
+          if (response.status === 200) {
+            if (response.data.message === 'SUCCESSFUL') {
+              this.snackbarFlag = true;
+              this.snackbarText = 'اپیزود شما با موفقیت ثبت شد :)';
+              this.$router.push("/myPodcasts");
+            } else {
+              this.snackbarFlag = true;
+              this.snackbarText = 'اپیزود شما با موفقیت ثبت شد :)';
+            }
           }
-        };
-        axios.post("http://localhost:8084/api/podcast/" + this.podcastId + "/upload", formData, config).then((response) => {
-          this.item = response.data;
-          this.e1 = 4;
         });
+      },
+      cancelPublishing() {
+        this.$router.push('/');
       },
       onFileChange(e) {
         //const file = e.target.files || e.dataTransfer.files;
@@ -461,6 +524,7 @@
         reader.readAsDataURL(file)
       },
       loadSubCategory(e) {
+        console.log("i am here")
         axios.get('http://localhost:8084/api/category/list/' + e + '/children')
           .then(response => {
             this.subCategory = response.data;
@@ -502,7 +566,7 @@
     mounted() {
       const inpFile = document.getElementById("inpFile");
       const previewImage = document.getElementById("imagePreview");
-      const mainPreviewImage = document.getElementById('mainPreviewImage')
+      const mainPreviewImage = document.getElementById('mainPreviewImage');
       inpFile.addEventListener('change', function () {
         const file = this.files[0];
         if (file) {
@@ -511,13 +575,15 @@
           reader.addEventListener('load', function () {
             previewImage.setAttribute("src", this.result);
             mainPreviewImage.setAttribute("src", this.result);
-
           });
           reader.readAsDataURL(file);
         } else {
           previewImage.setAttribute("src", "");
         }
       });
+      if (this.$store.getters.userLogin === true) {
+        this.isLogin = true;
+      }
     },
     created() {
       axios.get('http://localhost:8084/api/category/list/parents')

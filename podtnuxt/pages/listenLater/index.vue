@@ -32,8 +32,8 @@
           <br>
           <br>
           <v-row no-gutters>
-            <v-flex v-if="podcasts.length !== 0" v-for="item in podcasts" :key="item.podcastId" shrink>
-              <!--              <CardPlayer :item="item" :title-count="18"/>-->
+            <v-flex v-for="item in podcasts" :key="item.podcastId" shrink>
+              <CardPlayer :item="item" :title-count="18"/>
               <br/>
               <br/>
             </v-flex>
@@ -84,7 +84,7 @@
           <br>
           <v-row no-gutters>
             <v-flex v-for="item in podcasts" :key="item.podcastId" shrink>
-              <!--              <CardPlayer :item="item" :title-count="18"/>-->
+              <CardPlayer :item="item" :title-count="18"/>
               <br/>
               <br/>
             </v-flex>
@@ -122,7 +122,7 @@
           <h2 class="mt-2 mr-5">لیست بعدا گوش میدهم ها</h2></v-row>
         <v-row class="mt-4">
           <v-flex v-for="item in podcasts" :key="item.podcastId">
-            <!--            <MobileCardPlayer :item="item"/>-->
+            <MobileCardPlayer :item="item"/>
             <v-divider style="color: #464646;" :inset="false"></v-divider>
           </v-flex>
         </v-row>

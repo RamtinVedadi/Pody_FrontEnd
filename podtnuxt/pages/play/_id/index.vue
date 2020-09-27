@@ -306,7 +306,7 @@
         this.$router.push('/publisher/' + id)
       },
       categoryPageNavigation(id) {
-        this.$router.push('/categoryPage/' + id)
+        this.$router.push('/category/' + id)
       },
       listenLaterAction(podcastId) {
         if (this.$store.getters.userLogin === false) {
@@ -506,7 +506,7 @@
     },
     head() {
       return {
-        title:"پادی | " + this.post.title,
+        title: "پادی | " + this.post.title,
         meta: [
           // hid is used as unique identifier. Do not use `vmid` for it as it will not work
           {hid: 'description', name: 'description', content: 'My custom description'}

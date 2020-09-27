@@ -208,10 +208,8 @@
                         podcasts: response.data.categoryPodcasts,
                         isSubscribe: response.data.isFollow,
                     }
-
                 }
             });
-
         },
         data() {
             return {
@@ -301,7 +299,7 @@
         },
         head() {
             return {
-                title: "پادی |" + this.categoryData.name
+                title: "پادی | " + this.categoryData.name
             }
         }
     }

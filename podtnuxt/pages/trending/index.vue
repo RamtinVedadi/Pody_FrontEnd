@@ -115,35 +115,31 @@
     layout: "pody",
     name: "trending",
     components: {MobileCardTrending, CardTrending, Loader},
-    async asyncData(context) {
-      axios.get("http://localhost:8084/api/podcast/list/trending").then((response) => {
-        if (response.status === 200) {
-          return {
-            pageLoading: true,
-            podcasts: response.data.podcasts,
-            categories: response.data.categories,
-          }
-
-        }
-      });
-
+    data() {
+      return {
+        categories: [],
+        podcasts: [],
+        icons: [
+          {
+            name: "mdi-play-circle"
+          },
+        ],
+        pageLoading: false,
+      }
     },
-    data: () => ({
-      categories: [],
-      podcasts: [],
-      icons: [
-        {
-          name: "mdi-play-circle"
-        },
-      ],
-      pageLoading: false,
-    }),
     methods: {
       categoryPageNavigation(id) {
         this.$router.push('/categoryPage/' + id);
       },
     },
-    created() {
+    async created() {
+      await this.$axios.get("http://localhost:8084/api/podcast/list/trending").then((response) => {
+        if (response.status === 200) {
+          this.pageLoading = true;
+          this.podcasts = response.data.podcasts;
+          this.categories = response.data.categories;
+        }
+      });
     },
     head() {
       return {
