@@ -285,7 +285,6 @@
     @import "../../assets/Styles/GlobalPurposeStyle.css";
     @import "../../assets/Styles/PageSizingStyle.css";
 
-
     .flexi {
         display: flex;
         flex-wrap: nowrap;

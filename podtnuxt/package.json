@@ -12,6 +12,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-solid-svg-icons": "^5.13.1",
+    "@nuxtjs/axios": "^5.12.2",
     "axios": "^0.19.2",
     "fast-average-color": "^6.0.2",
     "font-awesome": "^4.7.0",
@@ -31,6 +32,7 @@
     "vue-meta": "^2.4.0",
     "vue-session": "^1.0.0",
     "vue-slider-component": "^3.2.2",
+    "vue-template-compiler": "^2.6.12",
     "vuetify": "^2.3.4",
     "vuex": "^3.5.1",
     "workbox-webpack-plugin": "^5.1.3"

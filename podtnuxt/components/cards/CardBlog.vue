@@ -78,7 +78,6 @@
                 this.$router.push('/blog/' + id);
             },
             randomColorGenerator() {
-                console.log("card id : " + this.idNumber);
                 let color = "#" + Math.floor(Math.random() * 0xFFFFFF).toString(16);
                 document.getElementById(this.idNumber).style.borderColor = color;
             },

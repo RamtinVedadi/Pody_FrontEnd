@@ -341,9 +341,9 @@
 </template>
 
 <script>
+  import MobileCardPlayer from "../../../components/cards/MobileCardPlayer";
   import CardPlayer from "../../../components/cards/CardPlayer";
   import axios from 'axios';
-  import MobileCardPlayer from "../../../components/cards/MobileCardPlayer";
 
   export default {
     layout: "pody",
