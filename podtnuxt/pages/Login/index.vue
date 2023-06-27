@@ -175,6 +175,7 @@
     import "../../assets/Styles/ButtonRainbowStyle.scss";
     import $ from "jquery";
 
+
     export default {
         name: "Login",
         data: () => {
