@@ -1,6 +1,6 @@
 <template>
     <v-row class="login fontMain" id="content">
-        <v-col cols="1" lg="3" md="2" sm="1" xs="0" xl="2"></v-col>
+        <v-col cols="1" lg="3" md="2" sm="1" xs="0" xl="2"2></v-col>
         <v-col cols="10" lg="6" md="8" sm="10" xs="12" xl="8">
             <v-form>
                 <v-card>
