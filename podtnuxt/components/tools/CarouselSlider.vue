@@ -1,15 +1,10 @@
 <template>
     <v-layout>
-        <v-flex>
-            <v-carousel height="100%" hide-delimiters cycle touchless>
+        <v-flex height="100%" min-height="100%" max-height="100%">
+            <v-carousel height="100%" min-height="100%" max-height="100%" hide-delimiters cycle show-arrows>
                 <v-carousel-item v-for="item in items" :key="item.id" @click="redirect(item.title,item.link)"
-                                 width="100%"
-                                 style="cursor: pointer">
-                    <v-sheet height="100%" tile>
-                        <v-row class="fill-height" align="center" justify="center">
-                            <v-img :src="item.src" :alt="item.title"></v-img>
-                        </v-row>
-                    </v-sheet>
+                                 width="100%" height="100%" min-height="100%" max-height="100%"
+                                 style="cursor: pointer" :src="item.src">
                 </v-carousel-item>
             </v-carousel>
         </v-flex>
@@ -24,7 +19,7 @@
                     {
                         id: 0,
                         src: "http://pody.ir/defaultImages/be_vaght_e_nahar_ads.jpg",
-                        link: "/",
+                        link: "http://pody.ir/publisher/a254e011-d65d-4f74-9f12-6c263f9dbd39",
                         title: 'پادکست به وقت ناهار'
                     },
                     {
@@ -38,12 +33,6 @@
                         src: "http://pody.ir/defaultImages/yourAds.jpg",
                         link: "/contactus",
                         title: 'اطلاعات بیشتر'
-                    },
-                    {
-                        id: 3,
-                        src: "http://pody.ir/defaultImages/pixmer.jpg",
-                        link: "https://pixmer.com/",
-                        title: 'پیکسمر'
                     },
                 ]
             };

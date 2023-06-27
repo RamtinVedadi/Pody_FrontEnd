@@ -30,7 +30,8 @@
                     </v-col>
                     <v-col cols="3">
                         <div v-for="(podcast,index) in allPodcast" :key="index">
-                            <marquee id="podcastTitle" scrollamount="5" behavior="circle" direction = "right" width = "100%">
+                            <marquee id="podcastTitle" scrollamount="5" behavior="circle" direction="right"
+                                     width="100%">
                                 <v-list-item-title class="move-text" @click="playPageNavigation(podcast.podcastId)"
                                                    style="font-size: 12px">
                                     {{podcast.podcastTitle}}
@@ -103,8 +104,7 @@
     let MobileAudio;
     let podcastFile;
     let myInterval;
-    let countSec = 0;
-    let addViewInt;
+    let pusePlay = false;
 
     export default {
         name: "mobilePlayer",
@@ -144,8 +144,6 @@
                 isLike: false,
                 loginDialogAction: false,
                 loginDialogMessage: '',
-                PodcastID: '',
-                USERID: '',
             }
         },
         methods: {
@@ -190,11 +188,14 @@
                 }
                 // this.changePosition();
                 // this.checkPodcastFile();
-                this.countdown();
-                this.addViewInterval();
+                // this.countdown();
+                if (!pusePlay) {
+                    this.addView();
+                }
             },
             pausePodcast() {
                 MobileAudio.pause();
+                pusePlay = true;
                 this.podcastIsPlaying = false;
             },
             audioForward() {
@@ -213,31 +214,6 @@
             },
             changePosition() {
                 setInterval(this.moveSlider, 1000);
-            },
-            countdown() {
-                let i = 30;
-                const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
-                array.forEach(() => {
-                        setTimeout(() => {
-                            if (i === 0) {
-
-                                let podcastId = null;
-                                this.$store.state.podcastMobile.forEach(pod => {
-                                    podcastId = pod.podcastId;
-                                });
-                                axios.get("http://localhost:8084/api/podcast/view/" + podcastId).then((response) => {
-                                    if (response.data.message === 'SUCCESSFUL') {
-                                        console.log("")
-                                    }
-                                });
-                            } else {
-                                i--;
-
-                            }
-                        }, 1000);
-                    }
-                );
-
             },
             moveSlider() {
                 if (MobileAudio.duration !== '00:00:00') {
@@ -309,7 +285,7 @@
             },
             checkPodcastAddress() {
                 this.$store.state.podcastMobile.forEach(pod => {
-                    if (this.currentPodcastFile == pod.podcastFile) {
+                    if (this.currentPodcastFile === pod.podcastFile) {
                         console.log("")
                     } else {
                         MobileAudio.pause();
@@ -355,49 +331,34 @@
                             MobileAudio.play();
                         }
                     }
-                    // this.podcastIsPlaying = true;
-
                 })
             },
             addViewInterval() {
                 addViewInt = setInterval(this.addView, 1000);
             },
             addView() {
-                countSec++;
-                if (this.podcastIsPlaying) {
-                    if (countSec > 45) {
-                        this.viewed = true;
-                        clearInterval(addViewInt);
-                        clearInterval(this.addViewInterval);
-                        if (this.$store.getters.userLogin === false) {
-                            axios.post("http://localhost:8084/api/podcast/view", {
-                                first: this.$store.state.podcastMobile[0].podcastId,
-                                second: null
-                            }).then(
-                                response => {
-                                    if (response.data.message !== 'SUCCESSFUL') {
-                                        countSec = 0;
-                                        this.viewed = false;
-                                        console.log(response.data.message)
-                                        this.addViewInterval();
-                                    }
-                                }
-                            );
-                        } else {
-                            axios.post("http://localhost:8084/api/podcast/view", {
-                                first: this.$store.state.podcastMobile[0].podcastId,
-                                second: this.$store.state.user[0].userId
-                            }).then(
-                                response => {
-                                    if (response.data.message !== 'SUCCESSFUL') {
-                                        countSec = 0;
-                                        this.viewed = false;
-                                        this.addViewInterval();
-                                    }
-                                }
-                            );
+                if (this.$store.getters.userLogin === false) {
+                    axios.post("http://localhost:8084/api/podcast/view", {
+                        first: this.$store.state.podcastMobile[0].podcastId,
+                        second: null
+                    }).then(
+                        response => {
+                            if (response.data.message !== 'SUCCESSFUL') {
+                                this.viewed = false;
+                            }
                         }
-                    }
+                    );
+                } else {
+                    axios.post("http://localhost:8084/api/podcast/view", {
+                        first: this.$store.state.podcastMobile[0].podcastId,
+                        second: this.$store.state.user[0].userId
+                    }).then(
+                        response => {
+                            if (response.data.message !== 'SUCCESSFUL') {
+                                this.viewed = false;
+                            }
+                        }
+                    );
                 }
             },
             likeFunction() {

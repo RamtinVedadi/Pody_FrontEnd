@@ -139,8 +139,9 @@
   let audio;
   let podcastFile;
   let myInterval;
-  let countSec = 0;
-  let addViewInt;
+  // let countSec = 0;
+  // let addViewInt;
+  let pusePlay = false;
   export default {
     name: "Player",
     components: {LoginDialog, VueSlider},
@@ -181,8 +182,6 @@
         viewed: false,
         loginDialogAction: false,
         loginDialogMessage: '',
-        PodcastID: '',
-        USERID: '',
         nothing:false,
 
       }
@@ -203,6 +202,7 @@
             audio = new Audio(podcastFile);
             // audio.play();
             this.playPodcast();
+            pusePlay = false;
             this.loaded = true;
             this.podcastDuration = audio.duration;
             this.currentPodcastFile = pod.podcastFile;
@@ -214,23 +214,20 @@
         this.changePosition();
         this.checkPodcastFile();
       },
-      marqueeMouseOver() {
-        document.getElementById("podcastTitle").setAttribute("scrollamount", '5');
-      },
-      marqueeMouseOut() {
-        document.getElementById("podcastTitle").setAttribute("scrollamount", '0');
-      },
       playPodcast() {
         audio.play();
         this.podcastIsPlaying = true;
         if (this.$store.getters.userLogin === true) {
           this.checkIsLike();
         }
-        this.addView();
+        if(!pusePlay){
+          this.addView();
+        }
         // this.addViewInterval();
       },
       pausePodcast() {
         audio.pause();
+        pusePlay = true;
         this.loadingAudio = false;
         this.podcastIsPlaying = false;
       },
@@ -329,8 +326,6 @@
         setInterval(this.checkPodcastAddress, 1000);
       },
       checkPodcastAddress() {
-        this.PodcastID = this.$store.state.podcast[0].podcastId;
-        this.USERID = this.$store.state.user[0].userId;
         this.$store.state.podcast.forEach(pod => {
           if (this.currentPodcastFile == pod.podcastFile) {
             this.nothing = true;
@@ -374,12 +369,7 @@
               audio.play();
             }
           }
-          // this.podcastIsPlaying = true;
-
         })
-      },
-      addViewInterval() {
-        addViewInt = setInterval(this.addView, 1000);
       },
       addView() {
         if (this.$store.getters.userLogin === false) {
@@ -389,7 +379,6 @@
           }).then(
             response => {
               if (response.data.message !== 'SUCCESSFUL') {
-                countSec = 0;
                 this.viewed = false;
               }
             }
@@ -401,7 +390,6 @@
           }).then(
             response => {
               if (response.data.message !== 'SUCCESSFUL') {
-                countSec = 0;
                 this.viewed = false;
               }
             }

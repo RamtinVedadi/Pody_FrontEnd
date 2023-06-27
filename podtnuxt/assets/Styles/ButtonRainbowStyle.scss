@@ -1,0 +1,46 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+.rainbow {
+  position: relative;
+  z-index: 0;
+  width: 150px;
+  height: 15px;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 1.5rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: -2;
+    left: -30%;
+    top: -30%;
+    width: 200%;
+    height: 200%;
+    background-repeat: no-repeat;
+    background-size: 100% 50%;
+    background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+    background-image: linear-gradient(to right, rgb(255, 95, 109), rgb(255, 195, 113));
+    animation: rotate 4s linear infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: 6px;
+    top: 6px;
+    width: calc(100% - 12px);
+    height: calc(100% - 12px);
+    background: white;
+    border-radius: 1px;
+  }
+}

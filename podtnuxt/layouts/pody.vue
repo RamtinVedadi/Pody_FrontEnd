@@ -3,6 +3,9 @@
         <v-main>
             <Content/>
         </v-main>
+
+        <nuxt/>
+
         <div v-if="currentUrl !== '/register'">
             <div v-if="currentUrl !== '/rssLogin'">
                 <div v-if="currentUrl !== '/forgot'">
@@ -19,56 +22,51 @@
         <div v-if="currentUrl !== '/register'">
             <div v-if="currentUrl !== '/rssLogin'">
                 <div v-if="currentUrl !== '/Login'">
-                    <v-bottom-navigation
-                            class="flex"
-                            color="primary"
-                            fixed
-                            horizontal
-                            height="160"
-                            v-show="$vuetify.breakpoint.xsOnly || $vuetify.breakpoint.smOnly"
-                    >
-                        <v-row class="justify-center align-start">
-                            <v-row id="mobilePlayerId" class="mobilePlayer justify-center align-center">
-                                <mobilePlayer/>
+                    <div v-if="currentUrl !== '/Login'">
+                        <v-bottom-navigation class="flex" color="primary" fixed horizontal height="160"
+                                             v-show="$vuetify.breakpoint.xsOnly || $vuetify.breakpoint.smOnly">
+                            <v-row class="justify-center align-start">
+                                <v-row id="mobilePlayerId" class="mobilePlayer justify-center align-center">
+                                    <mobilePlayer/>
+                                </v-row>
+                                <v-row class="dividerMobile">
+                                </v-row>
+                                <v-row class="mobileNavigator ml-4 justify-space-around  align-end">
+                                    <v-col cols="3">
+                                        <!--Subscriptions-->
+                                        <v-btn @click=" buttonRedirect(mainNavigation[2].url)">
+                                            <span>{{mainNavigation[2].title}}</span>
+                                            <v-icon v-text="mainNavigation[2].icon" style="color: #606060"></v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                    <v-col cols="3">
+                                        <!--Trending-->
+                                        <v-btn @click=" buttonRedirect(mainNavigation[1].url)">
+                                            <span>{{mainNavigation[1].title}}</span>
+                                            <v-icon v-text="mainNavigation[1].icon" style="color: #606060"></v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                    <v-col cols="3">
+                                        <!--Search-->
+                                        <v-btn @click=" buttonRedirect(mainNavigation[3].url)">
+                                            <span>{{mainNavigation[3].title}}</span>
+                                            <v-icon v-text="mainNavigation[3].icon" style="color: #606060"></v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                    <v-col cols="3">
+                                        <!--Home-->
+                                        <v-btn v-on:click=" buttonRedirect(mainNavigation[0].url)">
+                                            <span>{{mainNavigation[0].title}}</span>
+                                            <v-icon v-text="mainNavigation[0].icon" style="color: #606060"></v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
                             </v-row>
-                            <v-row class="dividerMobile">
-                            </v-row>
-                            <v-row class="mobileNavigator ml-4 justify-space-around  align-end">
-                                <v-col cols="3">
-                                    <!--Subscriptions-->
-                                    <v-btn @click=" buttonRedirect(mainNavigation[2].url)">
-                                        <span>{{mainNavigation[2].title}}</span>
-                                        <v-icon v-text="mainNavigation[2].icon" style="color: #606060"></v-icon>
-                                    </v-btn>
-                                </v-col>
-                                <v-col cols="3">
-                                    <!--Trending-->
-                                    <v-btn @click=" buttonRedirect(mainNavigation[1].url)">
-                                        <span>{{mainNavigation[1].title}}</span>
-                                        <v-icon v-text="mainNavigation[1].icon" style="color: #606060"></v-icon>
-                                    </v-btn>
-                                </v-col>
-                                <v-col cols="3">
-                                    <!--Search-->
-                                    <v-btn @click=" buttonRedirect(mainNavigation[3].url)">
-                                        <span>{{mainNavigation[3].title}}</span>
-                                        <v-icon v-text="mainNavigation[3].icon" style="color: #606060"></v-icon>
-                                    </v-btn>
-                                </v-col>
-                                <v-col cols="3">
-                                    <!--Home-->
-                                    <v-btn v-on:click=" buttonRedirect(mainNavigation[0].url)">
-                                        <span>{{mainNavigation[0].title}}</span>
-                                        <v-icon v-text="mainNavigation[0].icon" style="color: #606060"></v-icon>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-                        </v-row>
-                    </v-bottom-navigation>
+                        </v-bottom-navigation>
+                    </div>
                 </div>
             </div>
         </div>
-        <nuxt/>
     </v-app>
 </template>
 
@@ -80,7 +78,9 @@
 
     export default {
         name: "pody",
-        components: {Player, Content, mobilePlayer, VueSession},
+        components: {
+            Player, Content, mobilePlayer, VueSession,
+        },
         data: () => ({
             currentUrl: "",
             drawer: true,

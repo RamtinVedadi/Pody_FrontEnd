@@ -1,10 +1,11 @@
 <template>
-    <div class="fontMain notLogin">
-        <v-row style="height: 100%;">
+    <div class="fontMain">
+        <v-row>
             <v-col cols="9">
                 <v-row class="justify-center" style="height: 100%">
                     <div style="height: 100%">
-                        <v-img width="500px" height="500px" src="../../assets/NotLogin.svg"></v-img>
+                        <v-img width="500px" height="500px"
+                               :src="require('../../assets/NotLogin.svg')"></v-img>
                     </div>
                 </v-row>
             </v-col>
@@ -31,6 +32,7 @@
                 </v-row>
             </v-col>
         </v-row>
+        <div style="height:19vh"></div>
     </div>
 </template>
 
@@ -47,10 +49,4 @@
 
 <style scoped>
     @import "../../assets/Styles/FontiranSans.css";
-
-    .notLogin {
-        background: #f9f9f9;
-        height: 100%;
-    }
-
 </style>
